@@ -17,7 +17,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-scala-experimental"         % akkaStreamVersion,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental"    % akkaStreamVersion,
     "com.typesafe.akka" %% "akka-http-testkit-scala-experimental" % akkaStreamVersion,
-    "org.scalatest"     %% "scalatest"                            % scalaTestVersion % "test"
+    "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+  "org.scalatest"     %% "scalatest"                            % scalaTestVersion % "test"
   )
 }
 
