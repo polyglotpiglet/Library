@@ -11,17 +11,23 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorFlowMaterializer
 import akka.stream.scaladsl.{Sink, Source, Flow}
 import com.ojha.library.Main._
-import com.ojha.library.dataModel.BookInfo
-import play.api.libs.json.{Json, JsValue}
+import com.ojha.library.book.BookApi.{BookIdNotFound, BookInfo}
+import play.api.libs.json._
 
 import scala.concurrent.Future
+import scala.util.Try
 
 /**
  * Created by alexandra on 05/05/15.
  */
 
 object BookApi {
-  case class BookInfo2(title: String, author: String)
+  case class BookInfo(title: String, author: String)
+  case class UnableToParseBookInfo(message: String = null, cause: Throwable = null) extends RuntimeException
+
+  case class BookIdNotFound(bookId: String) extends RuntimeException{
+    override def getMessage = s"Unable to retrieve book info for book id = $bookId"
+  }
 }
 
 trait BookApi {
@@ -40,21 +46,29 @@ trait BookApi {
     Source.single(request).via(bookApi).runWith(Sink.head)
   }
 
+  /*
+  Calls out to external service to retrieve book info for a book id
+   */
   def getBookInfo(bookId: String): Future[BookInfo] = {
 
     executeRequest(RequestBuilding.Get(s"/api/v2/json/$key/book/$bookId")).flatMap { response =>
       response.status match {
-        case OK         => Unmarshal(response.entity).to[String].map(jsonToBookInfo)
-        case _          => throw new IOException(s"Book service returned response code: ${response.status}")
+        case OK =>
+          Unmarshal(response.entity).to[String]
+            .map(jsonToBookInfo(_).getOrElse(throw new BookIdNotFound(bookId)))
+        case _ => throw new IOException(s"Book service returned response code: ${response.status}")
       }
     }
   }
 
-  private def jsonToBookInfo(jsonString: String): BookInfo = {
-    val json = Json.parse(jsonString)
-    val author = ((json \ "data" \\ "author_data").head \\ "name").head.toString()
-    val title = (json \ "data" \\ "title").head.toString()
-    BookInfo(title, author)
+
+  private def jsonToBookInfo(jsonString: String): Try[BookInfo] = {
+    Try {
+      val json: JsValue = Json.parse(jsonString)
+      val author = ((json \ "data" \\ "author_data").head \\ "name").head.asInstanceOf[JsString].value
+      val title = (json \ "data" \\ "title").head.asInstanceOf[JsString].value
+      BookInfo(title, author)
+    }
   }
 
 }

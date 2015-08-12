@@ -18,7 +18,14 @@ class BookApiSpec extends UnitSpec with BookApi with ScalaFutures {
       bookInfo.title should equal("Slaughterhouse-five")
       bookInfo.author should equal("Vonnegut, Kurt")
     }
+  }
 
+  it should "fail when book doesnt exist" taggedAs ExternalTest in {
+    val bookInfo = getBookInfo("0000")
+
+    whenReady(bookInfo.failed) { e =>
+        e.getMessage should equal("Unable to retrieve book info for book id = 0000")
+    }
   }
 
 }
