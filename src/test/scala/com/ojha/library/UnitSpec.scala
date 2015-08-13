@@ -1,6 +1,6 @@
 package com.ojha.library
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, FunSpec, Matchers}
 
 /**
  * Created by alexandra on 10/08/15.

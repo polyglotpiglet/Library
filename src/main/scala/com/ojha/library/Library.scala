@@ -1,7 +1,7 @@
-package com.ojha.library.library
+package com.ojha.library
 
-import com.ojha.library.book.BookApi.BookInfo
-import com.ojha.library.library.Library.LibraryItem
+import com.ojha.library.BookApi.BookInfo
+import com.ojha.library.Library.LibraryItem
 
 /**
  * Created by alexandra on 05/05/15.
@@ -13,13 +13,13 @@ object Library {
 
 trait Library {
 
-  def addBook(item: LibraryItem)
+  def addBook(item: LibraryItem*)
 
   def getAllCategories: Set[String]
 
-  def getBookByAuthor(author: String): LibraryItem
+  def getBooksByAuthor(author: String): Set[LibraryItem]
 
-  def getBookByTitleSegment(titleText: String): LibraryItem
+  def getBooksByTitleSegment(titleText: String): Set[LibraryItem]
 
   def getBooksByCategory(category: String): Set[LibraryItem]
 

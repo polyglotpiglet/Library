@@ -1,6 +1,5 @@
-package com.ojha.library.book
+package com.ojha.library
 
-import com.ojha.library.{ExternalTest, UnitSpec}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 

@@ -1,4 +1,4 @@
-package com.ojha.library.book
+package com.ojha.library
 
 import java.io.IOException
 
@@ -6,12 +6,12 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpResponse, HttpRequest}
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorFlowMaterializer
-import akka.stream.scaladsl.{Sink, Source, Flow}
-import com.ojha.library.Main._
-import com.ojha.library.book.BookApi.{BookIdNotFound, BookInfo}
+import akka.stream.scaladsl.{Flow, Sink, Source}
+import com.ojha.library.BookApi.{BookIdNotFound, BookInfo}
+import com.ojha.library.config.Configurable
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -30,7 +30,7 @@ object BookApi {
   }
 }
 
-trait BookApi {
+trait BookApi extends Configurable {
 
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
